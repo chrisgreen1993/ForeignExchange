@@ -1,7 +1,7 @@
 require 'minitest/autorun'
 require 'webmock'
 require 'mongo_mapper'
-require './models'
+require_relative '../app/models'
 
 class TestExchangeDate < Minitest::Test
   include WebMock::API
@@ -42,19 +42,23 @@ class TestExchangeDate < Minitest::Test
     exchange_dates = ExchangeDate.all
     assert_equal(exchange_dates.length, 3)
     assert_equal(exchange_dates[1]['date'], Date.new(2016, 01, 19))
-    assert_equal(exchange_dates[1].rates.length, 2)
+    assert_equal(exchange_dates[1].rates.length, 3)
     rates = exchange_dates[1].rates
     assert_equal(rates[0]['currency'], 'USD')
     assert_equal(rates[0]['rate'], '1.0868')
     assert_equal(rates[1]['currency'], 'GBP')
     assert_equal(rates[1]['rate'], '128.12')
+    assert_equal(rates[2]['currency'], 'EUR')
+    assert_equal(rates[2]['rate'], '1')
     assert_equal(exchange_dates[2]['date'], Date.new(2016, 01, 18))
-    assert_equal(exchange_dates[2].rates.length, 2)
+    assert_equal(exchange_dates[2].rates.length, 3)
     rates = exchange_dates[2].rates
     assert_equal(rates[0]['currency'], 'USD')
     assert_equal(rates[0]['rate'], '1.7356')
     assert_equal(rates[1]['currency'], 'GBP')
     assert_equal(rates[1]['rate'], '1.1256')
+    assert_equal(rates[2]['currency'], 'EUR')
+    assert_equal(rates[2]['rate'], '1')
   end
 
   def test_update_rates_existing
@@ -79,12 +83,14 @@ class TestExchangeDate < Minitest::Test
     exchange_dates = ExchangeDate.all
     assert_equal(exchange_dates.length, 1)
     assert_equal(exchange_dates[0]['date'], Date.new(2016, 01, 01))
-    assert_equal(exchange_dates[0].rates.length, 2)
+    assert_equal(exchange_dates[0].rates.length, 3)
     rates = exchange_dates[0].rates
     assert_equal(rates[0]['currency'], 'USD')
     assert_equal(rates[0]['rate'], '1.0868')
     assert_equal(rates[1]['currency'], 'GBP')
     assert_equal(rates[1]['rate'], '128.12')
+    assert_equal(rates[2]['currency'], 'EUR')
+    assert_equal(rates[2]['rate'], '1')
   end
 
   def test_get_rate

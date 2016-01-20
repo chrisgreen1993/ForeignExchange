@@ -1,7 +1,7 @@
 require 'mongo_mapper'
 require 'httparty'
 require 'date'
-require './exchange_rate'
+require_relative 'lib/exchange_rate'
 
 class ExchangeDate < BaseExchangeRateStore
   include MongoMapper::Document

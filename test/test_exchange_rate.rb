@@ -1,7 +1,7 @@
 require 'minitest/autorun'
 require 'date'
 require 'bigdecimal'
-require './exchange_rate'
+require_relative '../app/lib/exchange_rate'
 
 class FakeExchangeRateStore < BaseExchangeRateStore
   def self.get_rate(date, currency)
@@ -17,8 +17,6 @@ class FakeExchangeRateStore < BaseExchangeRateStore
     ['EUR', 'GBP', 'USD']
   end
 
-  def self.update_rates
-  end
 end
 
 class TestExchangeRate < Minitest::Test
@@ -31,6 +29,12 @@ class TestExchangeRate < Minitest::Test
     rate = ExchangeRate.at(Date.new(2016,1,1), 'USD', 'GBP')
     expected = BigDecimal('0.65433') / BigDecimal('1.6534')
     assert_equal(rate, expected)
+  end
+
+  def test_convert
+    conversion = ExchangeRate.convert(Date.new(2016,1,1), '10.65', 'USD', 'GBP')
+    expected = (BigDecimal('0.65433') / BigDecimal('1.6534')) * BigDecimal('10.65')
+    assert_equal(conversion, expected)
   end
 
   def test_currencies
@@ -49,9 +53,6 @@ class TestBaseExchangeRateStore < Minitest::Test
   def test_not_implemented
     assert_raises NotImplementedError do
       BaseExchangeRateStore.get_rate(Date.today, 'USD')
-    end
-    assert_raises NotImplementedError do
-      BaseExchangeRateStore.update_rates
     end
     assert_raises NotImplementedError do
       BaseExchangeRateStore.get_dates

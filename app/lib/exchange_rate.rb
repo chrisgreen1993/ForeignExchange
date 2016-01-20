@@ -1,14 +1,18 @@
 
 class ExchangeRate
-
   class << self
     attr_accessor :store
   end
 
   def self.at(date, base_currency, counter_currency)
-    base = store.get_rate(date, base_currency)
-    counter = store.get_rate(date, counter_currency)
+    base = BigDecimal(store.get_rate(date, base_currency))
+    counter = BigDecimal(store.get_rate(date, counter_currency))
     counter / base
+  end
+
+  def self.convert(date, amount, base_currency, counter_currency)
+    rate = self.at(date, base_currency, counter_currency)
+    rate * BigDecimal(amount)
   end
 
   def self.dates
@@ -21,7 +25,6 @@ class ExchangeRate
 end
 
 class BaseExchangeRateStore
-
   def self.get_rate(date, currency)
     raise NotImplementedError
   end
@@ -33,9 +36,4 @@ class BaseExchangeRateStore
   def self.get_currencies
     raise NotImplementedError
   end
-
-  def self.update_rates
-    raise NotImplementedError
-  end
-
 end

@@ -1,0 +1,13 @@
+
+body > .container {
+  max-width: 500px;
+}
+
+.header {
+  text-align: center;
+}
+
+.conversion-msg {
+  font-size: 3.0rem;
+  text-align: center;
+}
