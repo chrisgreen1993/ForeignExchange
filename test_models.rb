@@ -99,4 +99,18 @@ class TestExchangeDate < Minitest::Test
     end
     assert_equal('This rate does not exist', exception.message)
   end
+
+  def test_get_dates
+    ExchangeDate.create({:date => Date.new(2015, 12, 05), :rates => [{:currency => 'USD', :rate => '1.5678'}, {:currency => 'GBP', :rate => '6.6789'}]})
+    ExchangeDate.create({:date => Date.new(2015, 12, 06), :rates => [{:currency => 'USD', :rate => '1.5678'}, {:currency => 'GBP', :rate => '6.6789'}]})
+    dates = ExchangeDate.get_dates
+    assert_equal(dates, [Date.new(2016, 1, 1), Date.new(2015, 12, 06), Date.new(2015, 12, 05)])
+  end
+
+  def test_get_currencies
+    ExchangeDate.create({:date => Date.new(2015, 12, 06), :rates => [{:currency => 'EUR', :rate => '1'}, {:currency => 'GBP', :rate => '6.6789'}]})
+    currencies = ExchangeDate.get_currencies
+    assert_equal(currencies, ['EUR', 'GBP', 'USD'])
+  end
+
 end

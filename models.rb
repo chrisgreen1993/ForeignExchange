@@ -16,6 +16,18 @@ class ExchangeDate < BaseExchangeRateStore
     BigDecimal(rate[:rate])
   end
 
+  def self.get_dates
+    exchange_dates = all()
+    dates = exchange_dates.map {|exchange_date| exchange_date[:date]}
+    dates.sort.reverse!
+  end
+
+  def self.get_currencies
+    exchange_dates = all()
+    rates = exchange_dates.map {|exchange_date| exchange_date.rates.map {|rate| rate[:currency]}}
+    rates.flatten.uniq.sort
+  end
+
   def self.update_rates
     resp = HTTParty.get('http://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml').parsed_response
     exchange_dates_resp = resp['Envelope']['Cube']['Cube']
