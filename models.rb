@@ -35,6 +35,7 @@ class ExchangeDate < BaseExchangeRateStore
     exchange_dates_resp.each do |exchange_date_resp|
       date = Date.parse(exchange_date_resp['time'])
       rates = exchange_date_resp['Cube']
+      rates << {:currency => 'EUR', :rate => '1'}
       exchange_date = first(:date => Date.to_mongo(date))
       if exchange_date
         exchange_date.rates = rates

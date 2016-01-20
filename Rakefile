@@ -1,5 +1,6 @@
-require_relative 'fetch_exchange_rates'
+require './app'
+require './models'
 
-task :fetch_exchange_rates do
-  fetch_exchange_rates
+task :update_exchange_rates do
+  ExchangeDate.update_rates
 end

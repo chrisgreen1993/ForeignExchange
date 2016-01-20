@@ -1,0 +1,30 @@
+<h1>Foreign Exchange</h1>
+<form action="/" method="post">
+  <label for="dateSelect">Date</label>
+  <select id="dateSelect" class="u-full-width" name="date" required>
+    <% selected = @params[:date] || @dates.first.to_s %>
+    <% @dates.each do |date| %>
+      <option value="<%= date %>" <%= 'selected' if selected == date.to_s %>><%= date %></option>
+    <%end %>
+  </select>
+  <label for="amountInput">Amount</label>
+  <input id="amountInput" class="u-full-width" name="amount" placeholder="Enter an amount" value="<%= @params[:amount] or 1 %>" type="number" min="1" step="any" required>
+  <label for="baseSelect">Base Currency</label>
+  <select id="baseSelect" class="u-full-width" name="base_currency" required>
+    <option value="" disabled selected>Choose a base currency</option>
+    <% @currencies.each do |currency| %>
+      <option value="<%= currency %>" <%= 'selected' if @params[:base_currency] == currency %>><%= currency %></option>
+    <%end %>
+  </select>
+  <label for="counterSelect">Counter Currency</label>
+  <select id="counterSelect" class="u-full-width" name="counter_currency" required>
+    <option value="" disabled selected>Choose a counter currency</option>
+    <% @currencies.each do |currency| %>
+      <option value="<%= currency %>" <%= 'selected' if @params[:counter_currency] == currency %>><%= currency %></option>
+    <%end %>
+  </select>
+  <input class="u-full-width button-primary" type="submit" value="Convert!">
+  <% if @conversion_text %>
+    <p><%= @conversion_text %></p>
+  <%end %>
+</form>
