@@ -4,12 +4,12 @@ require 'bigdecimal'
 require './exchange_rate'
 
 class FakeExchangeRateStore < BaseExchangeRateStore
-  def self.get(date, currency)
+  def self.get_rate(date, currency)
     return BigDecimal('1.6534') if currency == 'USD'
     return BigDecimal('0.65433') if currency == 'GBP'
   end
 
-  def self.fetch
+  def self.update_rates
   end
 end
 
@@ -27,13 +27,13 @@ class TestBaseExchangeRateStore < Minitest::Test
 
   def test_get_not_implemented
     assert_raises NotImplementedError do
-      BaseExchangeRateStore.get(Date.today, 'USD')
+      BaseExchangeRateStore.get_rate(Date.today, 'USD')
     end
   end
 
-  def test_fetch_not_implemented
+  def test_update_rates_not_implemented
     assert_raises NotImplementedError do
-      BaseExchangeRateStore.fetch
+      BaseExchangeRateStore.update_rates
     end
   end
 end
