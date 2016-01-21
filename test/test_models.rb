@@ -6,6 +6,7 @@ require_relative '../app/models'
 class TestExchangeDate < Minitest::Test
   include WebMock::API
 
+  # Setup test db and add record before each test
   def setup
     config = {'test' => {'uri' => 'mongodb://localhost/fx_test'}}
     MongoMapper.setup(config, 'test')
@@ -16,6 +17,7 @@ class TestExchangeDate < Minitest::Test
     ExchangeDate.delete_all
   end
 
+  # Test that update_rates will parse xml and insert into db correctly
   def test_update_rates_new
     xml = %{
       <?xml version="1.0" encoding="UTF-8"?>
@@ -36,10 +38,13 @@ class TestExchangeDate < Minitest::Test
         </Cube>
       </gesmes:Envelope>
     }
+    # Mock out HTTP request
     stub_request(:get, 'http://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml')
       .to_return(:body => xml, :status => 200, :headers => {'content-type' => 'text/xml'})
+    # Do the update
     ExchangeDate.update_rates
     exchange_dates = ExchangeDate.all
+    # Assert everythings ok
     assert_equal(exchange_dates.length, 3)
     assert_equal(exchange_dates[1]['date'], Date.new(2016, 01, 19))
     assert_equal(exchange_dates[1].rates.length, 3)
@@ -61,6 +66,7 @@ class TestExchangeDate < Minitest::Test
     assert_equal(rates[2]['rate'], '1')
   end
 
+  # Test that update_rates will update record if date already exists
   def test_update_rates_existing
     xml = %{
       <?xml version="1.0" encoding="UTF-8"?>
@@ -77,10 +83,13 @@ class TestExchangeDate < Minitest::Test
         </Cube>
       </gesmes:Envelope>
     }
+    # Mock out HTTP request
     stub_request(:get, 'http://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml')
       .to_return(:body => xml, :status => 200, :headers => {'content-type' => 'text/xml'})
+    # Do the update
     ExchangeDate.update_rates
     exchange_dates = ExchangeDate.all
+    # Assert everythings ok
     assert_equal(exchange_dates.length, 1)
     assert_equal(exchange_dates[0]['date'], Date.new(2016, 01, 01))
     assert_equal(exchange_dates[0].rates.length, 3)
@@ -93,12 +102,14 @@ class TestExchangeDate < Minitest::Test
     assert_equal(rates[2]['rate'], '1')
   end
 
+  # Test that get_rate will return correct rate
   def test_get_rate
     ExchangeDate.create({:date => Date.new(2015, 12, 05), :rates => [{:currency => 'USD', :rate => '1.5678'}, {:currency => 'GBP', :rate => '6.6789'}]})
     rate = ExchangeDate.get_rate(Date.new(2016, 01, 01), 'USD')
     assert_equal(rate, BigDecimal('1.566'))
   end
 
+  # Test that get_rate will raise exception if date or rate is missing
   def test_get_rate_no_rate
     exception = assert_raises RuntimeError do
       ExchangeDate.get_rate(Date.new(2013, 01, 01), 'USD')
@@ -106,6 +117,7 @@ class TestExchangeDate < Minitest::Test
     assert_equal('This rate does not exist', exception.message)
   end
 
+  # Test that get_dates gets all dates in correct order
   def test_get_dates
     ExchangeDate.create({:date => Date.new(2015, 12, 05), :rates => [{:currency => 'USD', :rate => '1.5678'}, {:currency => 'GBP', :rate => '6.6789'}]})
     ExchangeDate.create({:date => Date.new(2015, 12, 06), :rates => [{:currency => 'USD', :rate => '1.5678'}, {:currency => 'GBP', :rate => '6.6789'}]})
@@ -113,10 +125,10 @@ class TestExchangeDate < Minitest::Test
     assert_equal(dates, [Date.new(2016, 1, 1), Date.new(2015, 12, 06), Date.new(2015, 12, 05)])
   end
 
+  # Test that get_currencies gets all currencies in correct order
   def test_get_currencies
     ExchangeDate.create({:date => Date.new(2015, 12, 06), :rates => [{:currency => 'EUR', :rate => '1'}, {:currency => 'GBP', :rate => '6.6789'}]})
     currencies = ExchangeDate.get_currencies
     assert_equal(currencies, ['EUR', 'GBP', 'USD'])
   end
-
 end
