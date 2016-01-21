@@ -1,6 +1,6 @@
 # Foreign Exchange
 
-Sinatra web app for converting currencies using exchange_rate library. Backed my mongoDB.
+Sinatra web app for converting currencies and exchange_rate library. Backed by mongoDB.
 
 ## Usage
 
