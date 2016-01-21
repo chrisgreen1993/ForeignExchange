@@ -1,3 +1,8 @@
+require 'rubygems'
+require 'bundler'
+
+Bundler.require
+
 require 'rake/testtask'
 require_relative 'app/app'
 
@@ -8,5 +13,5 @@ end
 
 # Runs tests
 Rake::TestTask.new do |t|
-  t.pattern = "test/test_*.rb"
+  t.test_files = FileList["test/test_*.rb", "app/exchange_rate/test/test_*.rb"]
 end

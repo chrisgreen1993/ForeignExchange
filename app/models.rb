@@ -1,7 +1,7 @@
 require 'mongo_mapper'
 require 'httparty'
 require 'date'
-require_relative 'lib/exchange_rate'
+require 'exchange_rate'
 
 # Model class to represent a certain day of exchange rates
 # Contains date and array of subdocuments containing currency and rate
@@ -16,7 +16,7 @@ class ExchangeDate < BaseExchangeRateStore
   def self.get_rate(date, currency)
     exchange_date = where(:date => Date.to_mongo(date), 'rates.currency' => currency).first()
     raise 'This rate does not exist' if exchange_date.nil?
-    rate = exchange_date.rates.detect { |rate| rate[:currency] == currency }
+    rate = exchange_date.rates.detect {|rate| rate[:currency] == currency}
     BigDecimal(rate[:rate])
   end
 

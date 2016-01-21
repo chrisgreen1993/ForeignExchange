@@ -1,7 +1,7 @@
 require 'minitest/autorun'
 require 'date'
 require 'bigdecimal'
-require_relative '../app/lib/exchange_rate'
+require 'exchange_rate'
 
 # Fake store that just returns various values
 class FakeExchangeRateStore < BaseExchangeRateStore
@@ -55,7 +55,7 @@ end
 
 class TestBaseExchangeRateStore < Minitest::Test
 
-  # Test that BaseExchangeRateStore raises not implemented 
+  # Test that BaseExchangeRateStore raises not implemented
   def test_not_implemented
     assert_raises NotImplementedError do
       BaseExchangeRateStore.get_rate(Date.today, 'USD')
