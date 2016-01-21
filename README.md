@@ -2,6 +2,8 @@
 
 Sinatra web app for converting currencies and exchange_rate library. Backed by mongoDB.
 
+![Screenshot](screenshot.png)
+
 ## Usage
 
 Ruby version 2.3.0, MongoDB version 3.2.0
